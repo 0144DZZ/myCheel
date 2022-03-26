@@ -3,18 +3,20 @@ import {Route,Switch,Redirect,Link,withRouter} from 'react-router-dom';
 import Introduce from './introduce/introduce'
 
 const Input = lazy(()=>import('./input/input'))
+const MyTransfer = lazy(()=>import('./transfer/Transfer'))
 
 function RouteView(){
   return(
-    <div>
-      <Suspense fallback={<div>loading...</div>}>
+    <>
+      <Suspense fallback={<>loading...</>}>
         <Switch>
           <Route path="/input" component={Input}/>
           <Route path="/introduce" component={Introduce}/>
+          <Route path="/mytransfer" component={MyTransfer}/>
           <Redirect to="/introduce" exact />
         </Switch>
       </Suspense>
-    </div>
+    </>
   )
 }
 

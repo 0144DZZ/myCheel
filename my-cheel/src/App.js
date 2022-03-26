@@ -1,4 +1,4 @@
-import MyMenu from "./component/myMenu";
+import MyMenu from "./component/Layout/myMenu";
 
 function App() {
   return (
