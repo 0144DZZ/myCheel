@@ -60,6 +60,8 @@ let newTreeData = []
 function LeftTree() {
   const [checkedKeys, setCheckedKeys] = useState(treeData);
   const [treeDataList, setTreeDataList] = useState(treeData)
+  // 右边传递过来的数据
+  const [rightDataList, setRightDataList] = useState([])
   const [checkeEvent, setCheckedEvent] = useState();
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [info, setInfo] = useState(false)
@@ -67,11 +69,51 @@ function LeftTree() {
     PubSub.subscribe('left', (msg, info) => {
       setInfo(info.left)
     })
+    PubSub.subscribe('leftTreeData', (msg, info)=>{
+      // console.log('right',msg, info);
+      setRightDataList(info.leftTreeData)
+      rightData(info.leftTreeData)
+    })
+    PubSub.subscribe('rightData', (msg, info)=>{
+      setInfo(info.left)
+    })
+    // rightData()
     filterLeftData()
     return () => {
       PubSub.unsubscribe(info)
     }
   }, [info])
+
+  // 接收处理右边传递过来的数据
+  const rightData =(data)=>{
+    let newTreeDataList = JSON.parse(JSON.stringify(treeDataList))
+    newTreeDataList.map(item=>{
+        data.map(ditem=>{
+          console.log('ditem',ditem);
+          ditem.children.filter(dfitem=>{
+            delete dfitem.sign
+            delete dfitem.signLeft
+            console.log('item,ditem',item,ditem);
+            if(item.key === ditem.key){console.log('11111');
+              item.children.push(dfitem)
+            }else{
+              console.log('我需要重写创建一个obj');
+            }
+          })
+        })
+      // 单独对item去重
+      item.children = filteItem(item)
+    })
+    setTreeDataList(newTreeDataList)
+  }
+  const filteItem =(item)=>{
+    let newObj = {}
+    let newItem = item.children.reduce((item,next)=>{
+      newObj[next.key] ? '' : newObj[next.key] = true && item.push(next);
+      return item;
+    },[])
+    return newItem
+  }
 
   const filterLeftData = () => {
     if (info) {
@@ -94,8 +136,6 @@ function LeftTree() {
       r: r++,
       rightTreeData: rightTreeData
     })
-    console.log('rightTreeData---click',rightTreeData);
-    
   }
   // 点击向右边传输数据的时候，处理左边的数据
   const disposeLeftTreeData =()=>{
@@ -121,9 +161,9 @@ function LeftTree() {
       item.children = newChildren
       return item
     })
-    treeData = newData.filter(item=>item.children.length)
+    treeData = newData.filter(item=>item.children)
+    // console.log('treeData',treeData);
     setTreeDataList(treeData)
-    
     return
   }
 
@@ -131,9 +171,9 @@ function LeftTree() {
   // 勾选保存key
   const checkSaveKey =(value)=>{
     const {checkedNodes} = value
+    // console.log('checkedNodes',checkedNodes);
     const rightData = []
     const surplus = []
-    console.log('checkedNodes',checkedNodes);
     if(!checkedNodes.length){
       rightData = []
       return
@@ -177,7 +217,6 @@ function LeftTree() {
   }
 
   const activityObj =(item,ritem)=>{
-    // 创建一个新的obj
     let o = new Object()
     if(obj.key !== item.key){
       o.key = item.key
@@ -206,7 +245,6 @@ function LeftTree() {
       },[])
       fitem.children = newFitem
     })
-    console.log('最终的newTreeData',newTreeData);
     rightTreeData = newTreeData
   }
 

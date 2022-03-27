@@ -41,9 +41,6 @@ let obj = {}
 let newTreeData = []
 let leftTreeData = []
 
-
-
-
 function RightTree(){
   const [checkedKeys, setCheckedKeys] = useState(treeData);
   const [treeDataList, setTreeDataList] = useState([])
@@ -51,7 +48,6 @@ function RightTree(){
   const [info, setInfo] = useState(false)
   useEffect(()=>{
     PubSub.subscribe('right', (msg, info)=>{
-      console.log('msg',msg,info);
       const {rightTreeData} = info
       if(rightTreeData){
         treeData = rightTreeData
@@ -61,7 +57,6 @@ function RightTree(){
   },[info])
   useEffect(()=>{
     PubSub.subscribe('rightData', (msg, info)=>{
-      console.log('msg, info----',msg, info);
       filterLeftData()
     })
   },[info.left])
@@ -70,7 +65,6 @@ function RightTree(){
     const {checkedNodes} = value
     let rightData = []
     const surplus = []
-    console.log('checkedNodes',checkedNodes);
     if(!checkedNodes.length){
       rightData = []
       return
@@ -143,13 +137,11 @@ function RightTree(){
       },[])
       fitem.children = newFitem
     })
-    console.log('最终的newTreeData',newTreeData);
     leftTreeData = newTreeData
   }
   
   // 发送数据给左边
   const filterLeftData = () => {
-    console.log('6666',leftTreeData);
     if(leftTreeData.length){
       renderLeft()
     }
@@ -180,7 +172,6 @@ function RightTree(){
         }
       })
     })
-    console.log('treeData',treeData);
     deleteSignData()
   }
   // 删除已经被表示的item
